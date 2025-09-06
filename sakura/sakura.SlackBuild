@@ -69,7 +69,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$SRCNAM.tar.gz
+tar xvf $CWD/$PRGNAM-$SRCNAM.tar.gz
 cd $PRGNAM-$SRCNAM
 
 chown -R root:root .
