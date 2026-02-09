@@ -90,10 +90,11 @@ cp -a \
    $PKG/usr/share/fonts/TTF/
 
 # clean up the .desktop file and put it in place
-sed -i 's|^Exec=.*|Exec=zotero %f|' zotero.desktop
+sed -i 's|^Exec=.*|Exec=zotero %f|' $PKG/opt/$PRGNAM/$PRGNAM.desktop
+sed -i 's|^Icon=.*|Icon=zotero |' $PKG/opt/$PRGNAM/$PRGNAM.desktop
 mkdir -p $PKG/usr/share/applications
 cp -a \
-   $CWD/$PRGNAM.desktop \
+   $PKG/opt/$PRGNAM/$PRGNAM.desktop \
    $PKG/usr/share/applications/$PRGNAM.desktop
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
