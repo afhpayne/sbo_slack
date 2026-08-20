@@ -76,15 +76,12 @@ mkdir -p $PKG/usr/{bin,lib64}
 cp -a usr/lib/rstudio $PKG/usr/lib64
 cp -a usr/share $PKG/usr
 
-ln -s /usr/lib64/$PRGNAM/$PRGNAM $PKG/usr/bin/$PRGNAM
+cd $PKG/usr/bin
+ln -s ../lib64/rstudio/rstudio .
+cd -
 
-# Don't ship .la files:
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
-
-find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
-  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
-    | cut -f 1 -d : | xargs chmod 0755 2> /dev/null || true
+# We use the symlink in /usr/bin
+sed -i 's:/usr/lib/rstudio/rstudio:rstudio:' $PKG/usr/share/applications/rstudio.desktop
 
 # Fix sbopkglint gripes (regarding ELF binaries/libraries not being executable)
 WEBPACK_DIR=$PKG/usr/lib64/rstudio/resources/app/.webpack/main/native_modules
@@ -93,16 +90,13 @@ chmod +x $WEBPACK_DIR/dock.node $WEBPACK_DIR/desktop.node
 chmod +x $WEBPACK_DIR/build/Release/system-fonts.node $WEBPACK_DIR/build/Release/unix_dgram.node
 chmod +x $QUARTO_DIR/dart-sass/src/sass.snapshot $QUARTO_DIR/deno_dom/libplugin.so
 
-# make desktop file point to symlink in /usr/bin
-sed -i 's:/usr/lib/rstudio/rstudio:rstudio:' $PKG/usr/share/applications/rstudio.desktop
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a \
-   $PKG/usr/lib64/$PRGNAM/{LICENSE,LICENSES.chromium.html} \
-   $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a \
-   $PKG/usr/lib64/$PRGNAM/resources/app/{COPYING,NOTICE,README.md,SOURCE} \
-   $PKG/usr/doc/$PRGNAM-$VERSION
+  $PKG/usr/lib64/rstudio/resources/app/{COPYING,NOTICE,README.md,SOURCE} \
+  $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
